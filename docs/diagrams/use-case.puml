@@ -1,0 +1,44 @@
+@startuml
+left to right direction
+title Диаграмма вариантов использования — программа лояльности
+
+actor "Администратор\n(менеджер программы)" as Admin
+actor "Покупатель" as Customer
+
+rectangle "Система управления программой лояльности" {
+  usecase "Войти в систему" as UC_Login
+  usecase "Управлять покупателями" as UC_Customers
+  usecase "Просматривать карточку покупателя" as UC_Card
+  usecase "Управлять уровнями лояльности" as UC_Levels
+  usecase "Управлять бонусными счетами" as UC_Accounts
+  usecase "Начислять бонусы" as UC_Accrual
+  usecase "Списывать бонусы" as UC_WriteOff
+  usecase "Просматривать историю операций" as UC_History
+  usecase "Управлять акциями" as UC_Promo
+  usecase "Просматривать аналитику" as UC_Analytics
+  usecase "Настраивать программу" as UC_Settings
+  usecase "Просматривать профиль" as UC_Profile
+}
+
+Admin --> UC_Login
+Admin --> UC_Customers
+Admin --> UC_Card
+Admin --> UC_Levels
+Admin --> UC_Accounts
+Admin --> UC_Accrual
+Admin --> UC_WriteOff
+Admin --> UC_History
+Admin --> UC_Promo
+Admin --> UC_Analytics
+Admin --> UC_Settings
+Admin --> UC_Profile
+
+Customer --> UC_Card
+Customer --> UC_History
+Customer --> UC_Promo : просмотр доступных акций
+
+UC_Accrual ..> UC_Accounts : include
+UC_WriteOff ..> UC_Accounts : include
+UC_Card ..> UC_History : extend
+UC_Customers ..> UC_Card : extend
+@enduml

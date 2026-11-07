@@ -1,0 +1,103 @@
+@startuml
+title Диаграмма классов backend
+
+skinparam classAttributeIconSize 0
+
+package "controller" {
+  class CustomerController
+  class LoyaltyLevelController
+  class LoyaltyAccountController
+  class TransactionController
+  class PromotionController
+  class SettingsController
+  class AnalyticsController
+  class AuthController
+}
+
+package "service" {
+  interface AccountBalanceOperations {
+    + credit()
+    + debit()
+  }
+  class CustomerService
+  class LoyaltyLevelService
+  class LoyaltyAccountService
+  class BonusTransactionService
+  class PromotionService
+  class SettingsService
+  class AnalyticsService
+  class AuthService
+  class BonusCalculationDispatcher
+}
+
+package "strategy" {
+  interface BonusCalculationStrategy {
+    + code()
+    + calculate()
+  }
+  class FixedAmountAccrualStrategy
+  class PurchasePercentAccrualStrategy
+}
+
+package "repository" {
+  interface CustomerRepository
+  interface LoyaltyLevelRepository
+  interface LoyaltyAccountRepository
+  interface BonusTransactionRepository
+  interface PromotionRepository
+  interface ProgramSettingsRepository
+  interface LevelTransitionRepository
+  interface StaffUserRepository
+}
+
+package "domain" {
+  class Customer
+  class LoyaltyAccount
+  class LoyaltyLevel
+  class BonusTransaction
+  class Promotion
+  class ProgramSettings
+  class LevelTransition
+  class StaffUser
+}
+
+package "dto" {
+  class CustomerResponse
+  class LoyaltyLevelResponse
+  class TransactionResponse
+  class PromotionResponse
+}
+
+CustomerController --> CustomerService
+CustomerController --> LoyaltyAccountService
+CustomerController --> BonusTransactionService
+LoyaltyLevelController --> LoyaltyLevelService
+TransactionController --> BonusTransactionService
+PromotionController --> PromotionService
+AuthController --> AuthService
+
+BonusTransactionService --> AccountBalanceOperations
+LoyaltyAccountService ..|> AccountBalanceOperations
+BonusTransactionService --> BonusCalculationDispatcher
+BonusCalculationDispatcher --> BonusCalculationStrategy
+FixedAmountAccrualStrategy ..|> BonusCalculationStrategy
+PurchasePercentAccrualStrategy ..|> BonusCalculationStrategy
+
+CustomerService --> CustomerRepository
+LoyaltyAccountService --> LoyaltyAccountRepository
+LoyaltyLevelService --> LoyaltyLevelRepository
+BonusTransactionService --> BonusTransactionRepository
+PromotionService --> PromotionRepository
+
+Customer "1" -- "1" LoyaltyAccount
+LoyaltyLevel "1" -- "*" LoyaltyAccount
+Customer "1" -- "*" BonusTransaction
+LoyaltyLevel "0..1" -- "*" Promotion
+Customer "1" -- "*" LevelTransition
+LoyaltyLevel "1" -- "*" LevelTransition
+
+CustomerResponse .. Customer
+LoyaltyLevelResponse .. LoyaltyLevel
+TransactionResponse .. BonusTransaction
+PromotionResponse .. Promotion
+@enduml

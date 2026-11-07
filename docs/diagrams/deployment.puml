@@ -1,0 +1,35 @@
+@startuml
+title Диаграмма развертывания
+
+node "Рабочая станция менеджера" as Client {
+  artifact "Браузер" as Browser
+  artifact "React SPA\n(Vite, порт 5173)" as SPA
+}
+
+node "Сервер приложения" as AppHost {
+  artifact "Spring Boot REST API\n(порт 8080)" as API
+  artifact "Swagger UI\n/swagger-ui.html" as Swagger
+  artifact "Flyway-миграции" as Flyway
+}
+
+node "Сервер СУБД" as DbHost {
+  database "PostgreSQL 16\nБД loyalty" as PG
+}
+
+Browser --> SPA : HTTPS/HTTP
+SPA --> API : HTTP/JSON\nREST /api/*
+Browser --> Swagger : HTTP
+API --> Flyway
+Flyway --> PG : JDBC
+API --> PG : JDBC\nпротокол PostgreSQL
+
+note right of SPA
+  Axios-клиент
+  VITE_API_URL
+end note
+
+note right of API
+  Controller / Service / Repository
+  CORS для localhost:5173
+end note
+@enduml
